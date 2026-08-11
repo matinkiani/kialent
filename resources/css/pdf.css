@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+/* معرفی فونت TTF */
+@font-face {
+    font-family: 'IRANSans';
+    src: url('/fonts/IRANSansWeb.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* اعمال فونت فقط برای محدوده این فایل */
+@theme {
+    --font-sans: 'IRANSans', Tahoma, sans-serif;
+}
+
+/* تنظیمات سخت‌افزاری چاپگر */
+@page {
+    size: A4;
+    margin: 15mm;
+}
+
+@layer base {
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    table { page-break-inside: auto; }
+    tr { page-break-inside: avoid; page-break-after: auto; }
+}
+
+@layer utilities {
+    .border-heavy { border: 2px solid #000; }
+    .border-normal { border: 1px solid #000; }
+
+    .a4-preview {
+        width: 210mm;
+        min-height: 297mm;
+        margin: 20px auto;
+        background: white;
+    }
+    @media print {
+        .a4-preview {
+            width: 100%;
+            min-height: auto;
+            margin: 0;
+            box-shadow: none;
+        }
+    }
+}

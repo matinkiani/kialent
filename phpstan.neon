@@ -11,3 +11,8 @@ parameters:
         - routes/
 
     level: 7
+
+    ignoreErrors:
+        # Provided by ariaieboy/filament-jalali as runtime macros; not visible to static analysis.
+        - '#^Call to an undefined method Filament\\Forms\\Components\\DatePicker::jalali\(\)\.$#'
+        - '#^Call to an undefined method Filament\\Tables\\Columns\\TextColumn::jalaliDate(Time)?\(\)\.$#'
