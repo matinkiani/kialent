@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use App\Enums\BackPlateType;
@@ -28,7 +29,7 @@ class DatabaseSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'matinkianigame@gmail.com'], // شرط جستجو (ایمیل)
             [
-                'name'     => 'Matin',
+                'name' => 'Matin',
                 'password' => Hash::make('119988990'), // رمز عبور دلخواه خود را اینجا بنویسید
             ]
         );
@@ -94,9 +95,9 @@ class DatabaseSeeder extends Seeder
             Product::updateOrCreate(
                 $match,
                 [
-                    'name'            => $data['name'],
+                    'name' => $data['name'],
                     'back_plate_type' => $data['back_plate_type'],
-                    'technical_code'  => $data['technical_code'],
+                    'technical_code' => $data['technical_code'],
                 ]
             );
         }
@@ -125,5 +126,4 @@ class DatabaseSeeder extends Seeder
         }
 
     }
-
 }

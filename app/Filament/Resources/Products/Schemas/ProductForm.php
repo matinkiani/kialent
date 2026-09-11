@@ -30,6 +30,14 @@ class ProductForm
                     ->rows(4)
                     ->columnSpanFull(),
 
+                TextInput::make('weight')
+                    ->label('وزن')
+                    ->numeric()
+                    ->type('text')
+                    ->step(0.001)
+                    ->suffix('گرم')
+                    ->nullable(),
+
                 Select::make('back_plate_type')
                     ->label('نوع بک‌پلیت')
                     ->options(BackPlateType::class)

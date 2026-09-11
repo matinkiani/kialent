@@ -1,0 +1,22 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "mcp": {
+    "laravel-boost": {
+      "type": "local",
+      "command": [
+        "php",
+        "artisan",
+        "boost:mcp"
+      ]
+    },
+    "sqlite": {
+      "type": "local",
+      "command": [
+        "uvx",
+        "mcp-server-sqlite",
+        "--db-path",
+        "/Users/maht/Projects/kialent/database/database.sqlite"
+      ]
+    }
+  }
+}

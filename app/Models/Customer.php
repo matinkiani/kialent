@@ -17,7 +17,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'code'])]
+#[Fillable(['name', 'code', 'address'])]
 class Customer extends Model
 {
     /** @use HasFactory<CustomerFactory> */

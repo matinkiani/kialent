@@ -17,7 +17,9 @@
         "spatie/laravel-pdf": "^2.12"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "*",
         "fakerphp/faker": "^1.24",
+        "fruitcake/laravel-debugbar": "*",
         "larastan/larastan": "^3.9",
         "laravel/boost": "^2.2",
         "laravel/pail": "^1.2.5",

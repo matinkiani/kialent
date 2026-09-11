@@ -26,6 +26,10 @@ class CustomerForm
                     ->alphaDash()
                     ->mutateStateForValidationUsing(fn (?string $state): ?string => $state === null ? null : mb_strtoupper($state))
                     ->dehydrateStateUsing(fn (?string $state): ?string => $state === null ? null : mb_strtoupper($state)),
+
+                TextInput::make('address')
+                    ->label('آدرس')
+                    ->columnSpanFull(),
             ]);
     }
 }

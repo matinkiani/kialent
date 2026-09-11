@@ -38,6 +38,13 @@
         margin: 20px auto;
         background: white;
     }
+    /* هر فرم یک کاغذ مجزا؛ هنگام چاپ از صفحه‌ی جدید شروع می‌شود */
+    .sheet {
+        break-after: page;
+    }
+    .sheet:last-child {
+        break-after: auto;
+    }
     @media print {
         .a4-preview {
             width: 100%;

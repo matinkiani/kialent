@@ -2,9 +2,11 @@
 
 namespace App\Observers;
 
+use App\Enums\OrderStatus;
 use App\Models\Customer;
 use App\Models\Order;
 use Illuminate\Support\Facades\DB;
+use RuntimeException;
 
 class OrderObserver
 {
@@ -29,5 +31,34 @@ class OrderObserver
 
             return sprintf('%s-%03d', $customer->code, $sequence);
         });
+    }
+
+    /**
+     * When the order data changes, automatically flag it as «تغییر یافته» (Modified).
+     *
+     * A manual change to the status field itself always takes precedence and is respected.
+     */
+    public function updating(Order $order): void
+    {
+        if ($order->isDirty('status')) {
+            return;
+        }
+
+        if ($order->getDirty()) {
+            $order->status = OrderStatus::Modified;
+        }
+    }
+
+    /**
+     * سفارشی که حواله خروج دارد قابل حذف نیست.
+     *
+     * This is the single source of truth so every deletion path is covered;
+     * the Filament actions only hide or warn before reaching this point.
+     */
+    public function deleting(Order $order): void
+    {
+        if ($order->shipments()->exists()) {
+            throw new RuntimeException('سفارش دارای حواله خروج است و قابل حذف نیست.');
+        }
     }
 }

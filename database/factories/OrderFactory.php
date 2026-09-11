@@ -24,7 +24,7 @@ class OrderFactory extends Factory
             'customer_id' => Customer::factory(),
             'brand' => fake()->company(),
             'priority' => fake()->randomElement(OrderPriority::cases()),
-            'status' => fake()->randomElement(OrderStatus::cases()),
+            'status' => OrderStatus::Initial,
             'payment_notes' => fake()->boolean(40) ? fake()->sentence() : null,
             'ordered_at' => fake()->dateTimeBetween('-3 months', 'now'),
         ];

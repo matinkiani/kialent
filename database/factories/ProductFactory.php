@@ -21,6 +21,7 @@ class ProductFactory extends Factory
         return [
             'name' => fake()->unique()->words(3, true),
             'description' => fake()->optional()->sentence(),
+            'weight' => fake()->optional()->randomFloat(3, 0.1, 5000),
             'back_plate_type' => fake()->randomElement(BackPlateType::cases()),
         ];
     }

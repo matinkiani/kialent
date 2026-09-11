@@ -33,11 +33,17 @@ class ProductsTable
                     ->limit(40)
                     ->toggleable(),
 
+                TextColumn::make('weight')
+                    ->label('وزن')
+                    ->suffix(' گرم')
+                    ->sortable(),
+
                 TextColumn::make('back_plate_type')
                     ->label('نوع بک‌پلیت')
                     ->badge()
                     ->formatStateUsing(function ($state): string {
                         $backPlateType = $state instanceof BackPlateType ? $state : BackPlateType::tryFrom((string) $state);
+
                         return $backPlateType?->getLabel() ?? (string) $state;
                     })
                     ->sortable(),

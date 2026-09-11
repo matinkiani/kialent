@@ -27,4 +27,16 @@ enum BackPlateType: string implements HasLabel
             self::ThreeTypes => ($sets * 2).'+'.$sets.'+'.$sets,
         };
     }
+
+    /**
+     * @return array<int, string>
+     */
+    public function deliveryQuantityRowLabels(): array
+    {
+        return match ($this) {
+            self::OneType => ['تعداد ساده'],
+            self::TwoTypes => ['تعداد ساده', 'تعداد نکدار'],
+            self::ThreeTypes => ['تعداد ساده', 'نکدار چپ', 'نکدار راست'],
+        };
+    }
 }
