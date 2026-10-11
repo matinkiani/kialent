@@ -105,6 +105,23 @@ class OrderForm
                                     ->default(now())
                                     ->required(),
 
+                                TextInput::make('color')
+                                    ->label('رنگ')
+                                    ->required()
+                                    ->maxLength(50),
+
+                                Select::make('slot_type')
+                                    ->label('نوع شیار')
+                                    ->options(SlotType::class)
+                                    ->required()
+                                    ->default(SlotType::None),
+
+                                Select::make('chamfer_type')
+                                    ->label('نوع پخ')
+                                    ->options(ChamferType::class)
+                                    ->required()
+                                    ->default(ChamferType::None),
+
                                 Textarea::make('payment_notes')
                                     ->label('یادداشت پرداخت')
                                     ->columnSpanFull()
@@ -136,8 +153,8 @@ class OrderForm
                                                 'quantity' => null,
                                                 'backing_plate_thickness' => $lastItem['backing_plate_thickness'] ?? null,
                                                 'color' => $lastItem['color'] ?? null,
-                                                'slot_type' => $lastItem['slot_type'] ?? SlotType::None->value,
-                                                'chamfer_type' => $lastItem['chamfer_type'] ?? ChamferType::None->value,
+                                                'slot_type' => $lastItem['slot_type'] ?? null,
+                                                'chamfer_type' => $lastItem['chamfer_type'] ?? null,
                                                 'has_shim' => $lastItem['has_shim'] ?? false,
                                                 'production_notes' => null,
                                                 'packaging_notes' => null,
@@ -212,20 +229,15 @@ class OrderForm
 
                                                 TextInput::make('color')
                                                     ->label('رنگ')
-                                                    ->maxLength(50)
-                                                    ->required(),
+                                                    ->maxLength(50),
 
                                                 Select::make('slot_type')
                                                     ->label('نوع شیار')
-                                                    ->options(SlotType::class)
-                                                    ->default(SlotType::None)
-                                                    ->required(),
+                                                    ->options(SlotType::class),
 
                                                 Select::make('chamfer_type')
                                                     ->label('نوع پخ')
-                                                    ->options(ChamferType::class)
-                                                    ->default(ChamferType::None)
-                                                    ->required(),
+                                                    ->options(ChamferType::class),
 
                                                 Flex::make([
                                                     Toggle::make('has_shim')
@@ -252,6 +264,13 @@ class OrderForm
                                     ->reorderableWithButtons()
                                     ->reorderableWithDragAndDrop()
                                     ->collapsible()
+                                    ->deleteAction(
+                                        fn (Action $action): Action => $action
+                                            ->disabled(fn (Repeater $component, array $arguments): bool => self::resolveItemShippedTotal($component, $arguments) > 0)
+                                            ->tooltip(fn (Repeater $component, array $arguments): ?string => self::resolveItemShippedTotal($component, $arguments) > 0
+                                                ? 'این قلم دارای حواله خروج است و قابل حذف نیست'
+                                                : null),
+                                    )
                                     ->itemLabel(function (array $state, Repeater $component, string $uuid): ?string {
                                         $productId = $state['product_id'] ?? null;
 
@@ -280,6 +299,16 @@ class OrderForm
                             ]),
                     ]),
             ]);
+    }
+
+    /**
+     * تعداد دستِ ارسال‌شدهٔ یک قلم سفارش از حواله‌ها (۰ برای اقلام جدید).
+     */
+    private static function resolveItemShippedTotal(Repeater $component, array $arguments): int
+    {
+        $record = $component->getChildSchema($arguments['item'])?->getRecord();
+
+        return $record instanceof OrderItem ? (int) ($record->shipped_total ?? 0) : 0;
     }
 
     /**

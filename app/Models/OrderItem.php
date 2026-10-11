@@ -20,9 +20,9 @@ use Illuminate\Support\Carbon;
  * @property int|null $box_quantity
  * @property string|null $backing_plate_thickness
  * @property bool $has_shim
- * @property string $color
- * @property SlotType $slot_type
- * @property ChamferType $chamfer_type
+ * @property string|null $color
+ * @property SlotType|null $slot_type
+ * @property ChamferType|null $chamfer_type
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Order $order
@@ -52,8 +52,6 @@ class OrderItem extends Model
     protected $attributes = [
         'quantity' => 1,
         'has_shim' => false,
-        'slot_type' => 'none',
-        'chamfer_type' => 'none',
     ];
 
     /**

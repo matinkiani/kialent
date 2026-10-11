@@ -134,6 +134,24 @@ test('an order view shows shipment totals and weights', function () {
         ->assertDontSee('100 + 200 + 50 دست');
 });
 
+test('the order view infolist shows order-level specs', function () {
+    $customer = Customer::factory()->create();
+    $order = Order::factory()->for($customer)->create([
+        'color' => 'copper',
+        'slot_type' => SlotType::Angled,
+        'chamfer_type' => ChamferType::Standard,
+    ]);
+
+    Livewire::test(ViewOrder::class, ['record' => $order->id])
+        ->assertSuccessful()
+        ->assertSee('رنگ')
+        ->assertSee('copper')
+        ->assertSee('نوع شیار')
+        ->assertSee('شیار کج')
+        ->assertSee('نوع پخ')
+        ->assertSee('پخ دار');
+});
+
 test('an order can be created with items via the repeater and receives an order number', function () {
     $customer = Customer::factory()->create(['code' => '14']);
 
@@ -389,4 +407,92 @@ test('editing a single item field like in the browser marks the order as modifie
 
     expect($order->fresh()->status)->toBe(OrderStatus::Modified)
         ->and($orderItem->fresh()->quantity)->toBe(12);
+});
+
+test('order-level specs are saved with the order', function () {
+    $customer = Customer::factory()->create();
+    $product = Product::factory()->create();
+
+    Livewire::test(CreateOrder::class)
+        ->fillForm([
+            'customer_id' => $customer->id,
+            'brand' => 'Brando',
+            'color' => 'copper',
+            'slot_type' => SlotType::Angled->value,
+            'chamfer_type' => ChamferType::Standard->value,
+            'ordered_at' => now()->toDateString(),
+            'orderItems' => [
+                [
+                    'product_id' => $product->id,
+                    'quantity' => 5,
+                    'color' => 'black',
+                    'slot_type' => SlotType::Straight->value,
+                    'chamfer_type' => ChamferType::Standard->value,
+                ],
+            ],
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    $order = Order::sole();
+
+    expect($order->color)->toBe('copper')
+        ->and($order->slot_type)->toBe(SlotType::Angled)
+        ->and($order->chamfer_type)->toBe(ChamferType::Standard);
+});
+
+test('order-level color is required when saving an order', function () {
+    $customer = Customer::factory()->create();
+    $product = Product::factory()->create();
+
+    Livewire::test(CreateOrder::class)
+        ->fillForm([
+            'customer_id' => $customer->id,
+            'brand' => 'Brando',
+            'color' => null,
+            'ordered_at' => now()->toDateString(),
+            'orderItems' => [
+                [
+                    'product_id' => $product->id,
+                    'quantity' => 5,
+                    'color' => 'black',
+                    'slot_type' => SlotType::None->value,
+                    'chamfer_type' => ChamferType::None->value,
+                ],
+            ],
+        ])
+        ->call('create')
+        ->assertHasFormErrors(['color' => 'required']);
+});
+
+test('order item specs are optional and saved as null', function () {
+    $customer = Customer::factory()->create();
+    $product = Product::factory()->create();
+
+    Livewire::test(CreateOrder::class)
+        ->fillForm([
+            'customer_id' => $customer->id,
+            'brand' => 'Brando',
+            'color' => 'copper',
+            'slot_type' => SlotType::Angled->value,
+            'chamfer_type' => ChamferType::Standard->value,
+            'ordered_at' => now()->toDateString(),
+            'orderItems' => [
+                [
+                    'product_id' => $product->id,
+                    'quantity' => 5,
+                    'color' => null,
+                    'slot_type' => null,
+                    'chamfer_type' => null,
+                ],
+            ],
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    $item = Order::sole()->orderItems->sole();
+
+    expect($item->color)->toBeNull()
+        ->and($item->slot_type)->toBeNull()
+        ->and($item->chamfer_type)->toBeNull();
 });

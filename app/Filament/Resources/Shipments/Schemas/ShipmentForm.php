@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Shipments\Schemas;
 
+use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\PackagingItem;
@@ -109,10 +110,13 @@ class ShipmentForm
                             ->relationship(
                                 'order',
                                 'order_number',
-                                fn (Builder $query) => $query->orderByDesc('id'),
+                                fn (Builder $query) => $query
+                                    ->where('status', '!=', OrderStatus::CompletelyShipped)
+                                    ->orderByDesc('ordered_at')
+                                    ->orderByDesc('id'),
                             )
-                            ->getOptionLabelFromRecordUsing(fn (Order $record): string => "شماره: {$record->order_number} | مشتری: {$record->customer->name} | تاریخ: ".($record->created_at ? jalali($record->created_at)->format('Y/m/d') : '---'))
-                            ->searchable()
+                            ->getOptionLabelFromRecordUsing(fn (Order $record): string => "شماره: {$record->order_number} | برند: {$record->brand} | مشتری: {$record->customer->name} | تاریخ: ".($record->created_at ? jalali($record->created_at)->format('Y/m/d') : '---'))
+                            ->searchable(['order_number', 'brand'])
                             ->preload()
                             ->required()
                             ->live()
@@ -136,20 +140,16 @@ class ShipmentForm
                                         $remaining = $orderItem->quantity - $alreadyShipped;
 
                                         if ($remaining > 0) {
-                                            $quantityPerBox = PackagingItem::quantityPerBox($order->packaging_id, $orderItem->product_id);
-
                                             $uuid = (string) str()->uuid();
                                             $items[$uuid] = [
                                                 'order_item_id' => $orderItem->id,
                                                 'product_name' => $orderItem->product->name,
                                                 'ordered_quantity' => $orderItem->quantity,
                                                 'remaining_quantity' => $remaining,
-                                                'shipped_quantity' => $remaining,
-                                                'box_quantity' => $quantityPerBox !== null
-                                                    ? (int) ceil($remaining / $quantityPerBox)
-                                                    : null,
+                                                'shipped_quantity' => 0,
+                                                'box_quantity' => 0,
                                                 'product_weight' => $orderItem->product->weight,
-                                                'weight' => round(((float) ($orderItem->product->weight ?? 0) * $remaining) / 1000, 3),
+                                                'weight' => 0,
                                             ];
                                         }
                                     }
@@ -258,6 +258,7 @@ class ShipmentForm
                                     ->numeric()
                                     ->required()
                                     ->minValue(0)
+                                    ->default(0)
                                     ->suffix('دست')
                                     ->live(onBlur: true)
                                     ->afterStateUpdated($syncShipmentBoxFromQuantity)
@@ -279,6 +280,7 @@ class ShipmentForm
                                     ->integer()
                                     ->required()
                                     ->minValue(0)
+                                    ->default(0)
                                     ->suffix('کارتن')
                                     ->live(onBlur: true)
                                     ->afterStateUpdated($syncShipmentQuantityFromBox),

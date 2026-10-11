@@ -1,6 +1,9 @@
 <!-- فراخوانی اطلاعات پایه مشترک -->
 <x-order-basic-info :order="$order" />
 
+<!-- مشخصات فنی سفارش (سطح سفارش) -->
+@include('pdf.orders.parts.order-specs')
+
 <!-- جدول اقلام سفارش (مخصوص تولید) -->
 <div class="mb-12">
     <div class="font-bold text-md mb-2">۲. جزئیات فنی و دستورکار تولید</div>
@@ -10,11 +13,10 @@
                 <th class="border-normal p-2 w-10">#</th>
                 <th class="border-normal p-2 text-right">عنوان محصول</th>
                 <th class="border-normal p-2">تعداد</th>
-                <th class="border-normal p-2">کفشک</th>
-                <th class="border-normal p-2">رنگ</th>
-                <th class="border-normal p-2">شیار</th>
-                <th class="border-normal p-2">پخ</th>
                 <th class="border-normal p-2 w-16">شیم</th>
+                <th class="border-normal p-2 w-10">پخت شده</th>
+                <th class="border-normal p-2 w-10">کوره رفته</th>
+                <th class="border-normal p-2 w-10">رنگ شده</th>
             </tr>
         </thead>
         <tbody class="text-sm">
@@ -35,17 +37,22 @@
                         <span>{{ $item->product->backPlateBreakdown($item->quantity) }}</span>
                     </div>
                 </td>
-                <td class="border-normal p-2" dir="ltr">{{ $item->backing_plate_thickness ?? '---' }}</td>
-                <td class="border-normal p-2">{{ $item->color }}</td>
-                <td class="border-normal p-2">{{ $item->slot_type->getLabel() }}</td>
-                <td class="border-normal p-2">{{ $item->chamfer_type->getLabel() }}</td>
-                <td class="border-normal p-2">{{ $item->has_shim ? 'دارد' : 'ندارد' }}</td>
+                <td class="border-normal p-2">
+                    @if ($item->has_shim)
+                        <span class="font-bold underline">دارد</span>
+                    @else
+                        ندارد
+                    @endif
+                </td>
+                <td class="border-normal p-2"></td>
+                <td class="border-normal p-2"></td>
+                <td class="border-normal p-2"></td>
             </tr>
 
             <!-- سطر توضیحات تولید (فقط در صورت وجود نمایش داده می‌شود) -->
             @if($item->production_notes)
             <tr class="bg-gray-50">
-                <td colspan="7" class="border-normal p-2 text-right text-xs">
+                <td colspan="6" class="border-normal p-2 text-right text-xs">
                     <span class="font-bold text-gray-800">توضیحات تولید:</span>
                     <span class="text-gray-900 ml-2 whitespace-pre-line">{{ $item->production_notes }}</span>
                 </td>

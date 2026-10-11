@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use Filament\FontProviders\LocalFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -30,9 +31,20 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->brandName('KiaLent')
+            ->brandLogo(asset('img/logo3.png'))
+            ->brandLogoHeight('50px')
+            ->favicon(asset('img/fav.png'))
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Blue,
+                'gray' => Color::Neutral,
             ])
+            ->font(
+                'IRANSansWeb',
+                url: asset('fonts/fonts.css'),
+                provider: LocalFontProvider::class,
+                preload: [asset('fonts/iransans/IRANSansWeb.woff2')],
+            )
             ->renderHook(
                 PanelsRenderHook::BODY_END,
                 fn (): View => view('filament.digit-normalizer'),
@@ -45,7 +57,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 AccountWidget::class,
-                FilamentInfoWidget::class,
+                // FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Orders\Tables;
 
 use App\Enums\OrderPriority;
 use App\Enums\OrderStatus;
+use App\Filament\Resources\Orders\OrderResource;
 use App\Models\Order;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -105,7 +106,8 @@ class OrdersTable
                         ->all()),
             ])
             ->recordActions([
-                ViewAction::make(),
+                // ViewAction::make(),
+                OrderResource::downloadFormsAction()->color('success')->label('چاپ'),
                 EditAction::make(),
             ])
             ->toolbarActions([
@@ -128,6 +130,7 @@ class OrdersTable
                         }),
                 ]),
             ])
-            ->defaultSort('created_at', 'desc');
+            ->defaultSort('ordered_at', direction: 'desc')
+            ->defaultPaginationPageOption(25);
     }
 }

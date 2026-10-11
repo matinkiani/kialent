@@ -1,0 +1,15 @@
+# Excluded from the knowledge graph:
+# - Filament/vendor compiled JS in public/js (thousands of minified symbols, pure noise)
+public/js/
+
+# Duplicate cross-framework skill copies
+.claude/
+.github/
+.pi/
+
+# Agent/tooling config and state — metadata, not app architecture
+.agents/
+.codex/
+.kilo/
+.vscode/
+.zed/

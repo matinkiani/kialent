@@ -22,3 +22,10 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+/.pi
+/.kilo
+/.codex
+/.claude
+/graphify-out
+.DS_Store
+/.CLAUDE.md

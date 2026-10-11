@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Orders\Schemas;
 
+use App\Enums\ChamferType;
+use App\Enums\SlotType;
 use App\Models\Order;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -47,6 +49,15 @@ class OrderInfolist
                             ->state(fn (Order $record): string => self::formatWeight(self::totalWeight($record)))
                             ->suffix(' کیلوگرم')
                             ->weight('bold'),
+                        TextEntry::make('color')
+                            ->label('رنگ')
+                            ->placeholder('---'),
+                        TextEntry::make('slot_type')
+                            ->label('نوع شیار')
+                            ->formatStateUsing(fn (SlotType $state): string => $state->getLabel()),
+                        TextEntry::make('chamfer_type')
+                            ->label('نوع پخ')
+                            ->formatStateUsing(fn (ChamferType $state): string => $state->getLabel()),
                         TextEntry::make('payment_notes')
                             ->label('یادداشت پرداخت')
                             ->columnSpanFull()

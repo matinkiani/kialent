@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Shipments\Tables;
 
 use App\Models\Shipment;
 use Filament\Actions\Action;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -54,23 +53,21 @@ class ShipmentsTable
                     ->jalaliDate()
                     ->sortable(),
             ])
-            ->defaultSort('id', 'desc')
+            ->defaultSort('shipped_at', direction: 'desc')
             ->filters([
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
-
+                // ViewAction::make(),
                 // دکمه چاپ حواله برای راننده
                 Action::make('printGatePass')
-                    ->label('چاپ حواله')
-                    ->icon('heroicon-o-printer')
-                    ->color('success')
-                    ->openUrlInNewTab()
-                    ->url(fn (Shipment $record): string => route('shipments.gate-pass.download', $record)),
-
+                ->label('چاپ')
+                ->icon('heroicon-o-printer')
+                ->color('success')
+                ->openUrlInNewTab()
+                ->url(fn (Shipment $record): string => route('shipments.gate-pass.download', $record)),
                 EditAction::make(),
-                DeleteAction::make(),
+
             ]);
     }
 }

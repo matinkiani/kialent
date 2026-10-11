@@ -3,11 +3,15 @@
 namespace App\Filament\Resources\Products\Tables;
 
 use App\Enums\BackPlateType;
+use App\Models\Product;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 
 class ProductsTable
 {
@@ -65,10 +69,27 @@ class ProductsTable
             ])
             ->recordActions([
                 EditAction::make(),
+                DeleteAction::make()
+                    ->visible(fn (Product $record): bool => $record->orderItems()->doesntExist()),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->before(function (Collection $records, DeleteBulkAction $action): void {
+                            $hasOrderItems = Product::query()
+                                ->whereKey($records->pluck('id'))
+                                ->has('orderItems')
+                                ->exists();
+
+                            if ($hasOrderItems) {
+                                Notification::make()
+                                    ->title('محصولات استفاده‌شده در اقلام سفارش قابل حذف نیستند.')
+                                    ->danger()
+                                    ->send();
+
+                                $action->halt();
+                            }
+                        }),
                 ]),
             ])
             ->defaultSort('created_at', 'desc'); // مرتب‌سازی پیش‌فرض (اختیاری)

@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Observers\CustomerObserver;
 use Database\Factories\CustomerFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,6 +20,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  */
 #[Fillable(['name', 'code', 'address'])]
+#[ObservedBy(CustomerObserver::class)]
 class Customer extends Model
 {
     /** @use HasFactory<CustomerFactory> */

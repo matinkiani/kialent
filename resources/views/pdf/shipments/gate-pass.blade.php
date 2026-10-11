@@ -17,17 +17,17 @@
             <div class="border-b border-l border-black bg-gray-100 p-2 font-bold">سفارش دهنده:</div>
             <div class="border-b  border-black p-2 font-bold">{{ $shipment->order->customer->name }}</div>
 
+            <div class="border-b border-l border-black bg-gray-100 p-2 font-bold">برند:</div>
+            <div class="border-b border-l border-black p-2">{{ $shipment->order->brand }}</div>
+
             <div class="border-b border-l border-black bg-gray-100 p-2 font-bold">تاریخ خروج:</div>
             <div class="border-b border-l border-black p-2">{{ jalali($shipment->shipped_at)->format('Y/m/d') }}</div>
 
-            <div class="border-b border-l border-black bg-gray-100 p-2 font-bold">راننده / باربری:</div>
-            <div class="border-b borظder-black p-2">{{ $shipment->driver_name }}</div>
+            <div class="border-l border-black bg-gray-100 p-2 font-bold">راننده / باربری:</div>
+            <div class="border-l border-black p-2">{{ $shipment->driver_name }}</div>
 
             <div class="border-l border-black bg-gray-100 p-2 font-bold">تعداد کل کارتن:</div>
             <div class="border-l border-black p-2 font-bold">{{ $shipment->total_master_boxes }} عدد</div>
-
-            <div class="border-l border-black bg-gray-100 p-2 font-bold">مقصد:</div>
-            <div class="border-black p-2">{{ $shipment->destination ?? '---' }}</div>
         </div>
     </div>
 
@@ -39,11 +39,10 @@
                 <tr class="border-b-2 border-black bg-gray-200 text-sm">
                     <th class="border-normal w-10 p-2">#</th>
                     <th class="border-normal p-2 text-right">عنوان محصول</th>
-                    <th class="border-normal p-2">کفشک</th>
-                    <th class="border-normal p-2">شیم</th>
                     <th class="border-normal w-24 p-2">تعداد سفارش</th>
+                    <th class="border-normal w-24 bg-gray-300 p-2 font-black">تعداد تحویلی فعلی</th>
+                    <th class="border-normal w-24 p-2">تعداد کارتن</th>
                     <th class="border-normal w-24 p-2">تعداد باقی‌مانده</th>
-                    <th class="border-normal w-24 bg-gray-300 p-2 font-black">تعداد تحویلی</th>
                 </tr>
             </thead>
             <tbody class="text-sm">
@@ -61,17 +60,11 @@
 
                         <td class="border-normal p-2 text-right font-bold">
                             {{ $orderItem->product->name }}
-                        </td>
-
-                        <td class="border-normal p-2" dir="ltr">
-                            {{ $orderItem->backing_plate_thickness ?? '---' }}
-                        </td>
-
-                        <td class="border-normal p-2">
                             @if ($orderItem->has_shim)
-                                <span class="font-bold">دارد</span>
-                            @else
-                                ندارد
+                                (ش)
+                            @endif
+                            @if (filled($orderItem->backing_plate_thickness))
+                                ({{ $orderItem->backing_plate_thickness }} م)
                             @endif
                         </td>
 
@@ -79,18 +72,22 @@
                             {{ $orderItem->quantity }} دست
                         </td>
 
-                        <td class="border-normal p-2 font-bold">
+                        <!-- تعداد تحویلی فعلی -->
+                        <td class="border-normal bg-gray-100 p-2 text-md font-black">
+                            {{ $item->shipped_quantity }} دست
+                        </td>
+
+                        <!-- تعداد کارتن -->
+                        <td class="border-normal p-2">
+                            {{ $item->box_quantity }} کارتن
+                        </td>
+
+                        <td class="border-normal p-2">
                             @if ($remaining>0)
 {{ $remaining }} دست
                             @else
                                 <span class="">---</span>
                             @endif
-
-                        </td>
-
-                        <!-- تعداد تحویلی -->
-                        <td class="border-normal bg-gray-100 p-2 text-md font-black">
-                            {{ $item->shipped_quantity }} دست
                         </td>
                     </tr>
                 @endforeach
@@ -98,16 +95,17 @@
                 <tr class="border-t-2 border-black  font-bold text-sm">
                     <td class=""></td>
                     <td class="p-2 text-start">مجموع:</td>
-                    <td class=""></td>
-                    <td class=""></td>
                     <td class="border-normal p-2 bg-gray-100">
                         {{ $shipment->shipmentItems->sum(fn($item) => $item->orderItem->quantity) }} دست
                     </td>
-                    <td class="border-normal p-2 bg-gray-100">
-                        {{ $shipment->shipmentItems->sum(fn($item) => max(0, $item->orderItem->quantity - $item->orderItem->shipmentItems->where('shipment_id', '<=', $shipment->id)->sum('shipped_quantity'))) }} دست
-                    </td>
                     <td class="border-normal bg-gray-200 p-2">
                         {{ $shipment->shipmentItems->sum('shipped_quantity') }} دست
+                    </td>
+                    <td class="border-normal p-2 bg-gray-100">
+                        {{ $shipment->shipmentItems->sum('box_quantity') }} کارتن
+                    </td>
+                    <td class="border-normal p-2 bg-gray-100">
+                        {{ $shipment->shipmentItems->sum(fn($item) => max(0, $item->orderItem->quantity - $item->orderItem->shipmentItems->where('shipment_id', '<=', $shipment->id)->sum('shipped_quantity'))) }} دست
                     </td>
                 </tr>
             </tbody>

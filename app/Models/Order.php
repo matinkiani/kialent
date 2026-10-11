@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\ChamferType;
 use App\Enums\OrderPriority;
 use App\Enums\OrderStatus;
+use App\Enums\SlotType;
 use App\Observers\OrderObserver;
 use Database\Factories\OrderFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -20,6 +22,9 @@ use Illuminate\Support\Carbon;
  * @property int $customer_id
  * @property int|null $packaging_id
  * @property string $brand
+ * @property string|null $color
+ * @property SlotType $slot_type
+ * @property ChamferType $chamfer_type
  * @property string $order_number
  * @property OrderPriority $priority
  * @property OrderStatus $status
@@ -30,7 +35,7 @@ use Illuminate\Support\Carbon;
  * @property-read Customer $customer
  * @property-read Packaging|null $packaging
  */
-#[Fillable(['customer_id', 'packaging_id', 'brand', 'priority', 'status', 'payment_notes', 'ordered_at'])]
+#[Fillable(['customer_id', 'packaging_id', 'brand', 'color', 'slot_type', 'chamfer_type', 'priority', 'status', 'payment_notes', 'ordered_at'])]
 #[ObservedBy(OrderObserver::class)]
 class Order extends Model
 {
@@ -40,6 +45,8 @@ class Order extends Model
     protected $attributes = [
         'priority' => 'normal',
         'status' => 'initial',
+        'slot_type' => 'none',
+        'chamfer_type' => 'none',
     ];
 
     /**
@@ -51,6 +58,8 @@ class Order extends Model
             'packaging_id' => 'integer',
             'priority' => OrderPriority::class,
             'status' => OrderStatus::class,
+            'slot_type' => SlotType::class,
+            'chamfer_type' => ChamferType::class,
             'ordered_at' => 'date',
         ];
     }

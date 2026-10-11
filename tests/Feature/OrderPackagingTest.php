@@ -31,6 +31,7 @@ test('packaging boxes are converted to hands and persisted alongside the box cou
             'customer_id' => $customer->id,
             'packaging_id' => $packaging->id,
             'brand' => 'Box Brand',
+            'color' => 'black',
             'ordered_at' => now()->toDateString(),
             'orderItems' => [
                 [
@@ -69,6 +70,7 @@ test('packaging boxes are converted when a previous submission had validation er
             'customer_id' => $customer->id,
             'packaging_id' => $packaging->id,
             'brand' => null,
+            'color' => 'black',
             'ordered_at' => now()->toDateString(),
             'orderItems' => [
                 [

@@ -1,6 +1,9 @@
 <!-- فراخوانی اطلاعات پایه مشترک -->
 <x-order-basic-info :order="$order" />
 
+<!-- مشخصات فنی سفارش (سطح سفارش) -->
+@include('pdf.orders.parts.order-specs')
+
 <div class="mb-12">
     <div class="font-bold text-md mb-2">۲. جزئیات اقلام و دستورکار بسته‌بندی</div>
     <table class="w-full text-center border-collapse border-heavy">
@@ -28,13 +31,28 @@
                 <td class="border-normal px-2 font-black">
                     <span>{{ $item->quantity }} دست</span>
                 </td>
-                <td class="border-normal p-2 font-bold">{{ $item->has_shim ? 'دارد' : 'ندارد' }}</td>
+                <td class="border-normal p-2">
+                    @if ($item->has_shim)
+                        <span class="font-bold underline">دارد</span>
+                    @else
+                        ندارد
+                    @endif
+                </td>
 
-                <!-- ستون جدید: نمایش شیار، پخ و ضخامت -->
+                <!-- ستون توضیحات: فقط موارد پرشده نمایش داده می‌شوند -->
                 <td class="border-normal p-2 text-xs text-right leading-relaxed">
-                    <div><span class="font-bold text-gray-700">شیار:</span> {{ $item->slot_type->getLabel() }}</div>
-                    <div><span class="font-bold text-gray-700">پخ:</span> {{ $item->chamfer_type->getLabel() }}</div>
-                    <div><span class="font-bold text-gray-700">کفشک:</span> <span dir="ltr">{{ $item->backing_plate_thickness ? $item->backing_plate_thickness . ' mm' : '---' }}</span></div>
+                    @if ($item->slot_type)
+                        <div><span class="font-bold text-gray-700">شیار:</span> {{ $item->slot_type->getLabel() }}</div>
+                    @endif
+                    @if ($item->chamfer_type)
+                        <div><span class="font-bold text-gray-700">پخ:</span> {{ $item->chamfer_type->getLabel() }}</div>
+                    @endif
+                    @if (filled($item->backing_plate_thickness))
+                        <div><span class="font-bold text-gray-700">کفشک:</span> <span dir="ltr">{{ $item->backing_plate_thickness }} mm</span></div>
+                    @endif
+                    @if ($item->production_notes)
+                        <div><span class="font-bold text-gray-700">تولید:</span> <span class="whitespace-pre-line">{{ $item->production_notes }}</span></div>
+                    @endif
                 </td>
 
                 <td class="border-normal p-2 text-xs text-right whitespace-pre-line">{{ $item->packaging_notes ?? '---' }}</td>

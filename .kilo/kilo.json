@@ -1,5 +1,9 @@
 {
   "$schema": "https://app.kilo.ai/config.json",
+  "indexing": {
+    "enabled": true,
+    "provider": "openrouter"
+  },
   "mcp": {
     "laravel-boost": {
       "type": "local",
@@ -18,5 +22,8 @@
         "/Users/maht/Projects/kialent/database/database.sqlite"
       ]
     }
-  }
+  },
+  "plugin": [
+    "file:///Users/maht/Projects/kialent/.kilo/plugins/graphify.js"
+  ]
 }
