@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('code', 10)->unique();
+            $table->text('address')->nullable();
             $table->unsignedInteger('next_order_sequence')->default(1);
             $table->timestamps();
         });

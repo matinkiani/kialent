@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('shipments', function (Blueprint $table) {
@@ -18,6 +21,7 @@ return new class extends Migration
             $table->string('vehicle_plate')->nullable();
             $table->text('destination')->nullable();
             $table->unsignedInteger('total_master_boxes')->default(0);
+            $table->decimal('total_weight', 12, 3)->default(0);
 
             $table->date('shipped_at');
             $table->text('notes')->nullable();
@@ -26,6 +30,9 @@ return new class extends Migration
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('shipments');

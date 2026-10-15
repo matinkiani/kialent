@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('shipment_items', function (Blueprint $table) {
@@ -15,11 +18,15 @@ return new class extends Migration
 
             // The actual quantity being loaded into the truck for this specific shipment
             $table->unsignedInteger('shipped_quantity')->default(0);
+            $table->unsignedInteger('box_quantity')->nullable();
 
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('shipment_items');

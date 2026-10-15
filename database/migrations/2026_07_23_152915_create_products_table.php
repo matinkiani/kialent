@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('technical_code')->unique()->nullable();
             $table->string('name')->index();
             $table->text('description')->nullable();
+            $table->decimal('weight', 10, 3)->nullable();
             $table->string('back_plate_type');
             $table->timestamps();
         });

@@ -13,14 +13,22 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('customer_id')->index()->constrained()->cascadeOnDelete();
+            $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
             $table->string('brand');
+            $table->string('color')->nullable();
+            $table->string('slot_type')->default('none');
+            $table->string('chamfer_type')->default('none');
+            $table->foreignId('packaging_id')->nullable()->constrained()->nullOnDelete();
             $table->string('order_number')->unique();
             $table->string('priority')->default('normal');
-            $table->string('status')->default('pending')->index();
+            $table->string('status')->default('initial');
             $table->text('payment_notes')->nullable();
             $table->date('ordered_at');
             $table->timestamps();
+
+            $table->index('customer_id');
+            $table->index('status');
+            $table->index('packaging_id');
         });
     }
 
