@@ -2,7 +2,6 @@ FROM php:8.4-fpm-alpine AS base
 
 RUN apk add --no-cache \
         icu-libs \
-        mariadb-client \
         libzip \
         oniguruma \
         libpng \
@@ -19,9 +18,11 @@ RUN apk add --no-cache --virtual .build-deps \
         libjpeg-turbo-dev \
         freetype-dev \
         postgresql-dev \
+        sqlite3-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
         pdo_mysql \
+        pdo_sqlite \
         pdo_pgsql \
         pgsql \
         intl \
