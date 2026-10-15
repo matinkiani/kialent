@@ -1,6 +1,8 @@
 services:
   app:
     build:
+      context: .
+      dockerfile: docker/Dockerfile
       target: prod
     image: kialent-app-prod
     restart: unless-stopped
@@ -37,6 +39,8 @@ services:
 
   queue:
     build:
+      context: .
+      dockerfile: docker/Dockerfile
       target: prod
     image: kialent-app-prod
     restart: unless-stopped
