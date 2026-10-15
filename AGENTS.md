@@ -1,4 +1,16 @@
 <laravel-boost-guidelines>
+=== .ai/database-safety rules ===
+
+# Database Safety Protocol
+
+- PRODUCTION/STAGING DATA EXISTS: The database contains live and sensitive records. Never perform destructive operations blindly.
+- MANDATORY BACKUP BEFORE MODIFICATION:
+  - Before running ANY destructive migration, `migrate:fresh`, `migrate:reset`, `db:wipe`, or schema altering commands (`ALTER TABLE`, dropping columns/tables), you MUST create a database backup dump first.
+  - Run a backup via Artisan command or database CLI (e.g., `php artisan db:backup` or a MySQL/PostgreSQL dump into a local `/storage/app/backups/` directory) before proceeding.
+  - If a migration involves modifying or dropping an existing column that contains data, write a data-migration step or save the existing column contents into a temporary/backup table before altering the schema.
+- ZERO DATA LOSS: Prefer non-destructive additive migrations (`nullable()` new columns, soft-deletes) over truncating or recreating tables.
+- NEVER run `php artisan migrate:fresh` or `php artisan db:seed` without explicit user permission.
+
 === foundation rules ===
 
 # Laravel Boost Guidelines
@@ -36,7 +48,7 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 ## Verification Scripts
 
-- Verify code manually or via quick tinker checks when needed.
+- Do not create verification scripts or tinker when tests cover that functionality and prove they work. Unit and feature tests are more important.
 
 ## Application Structure & Architecture
 
@@ -93,19 +105,6 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - Always use single quotes to prevent shell expansion: `php artisan tinker --execute 'Your::code();'`
   - Double quotes for PHP strings inside: `php artisan tinker --execute 'User::where("active", true)->count();'`
 
-
-=== database safety & backup rules ===
-
-# Database Safety Protocol
-
-- PRODUCTION/STAGING DATA EXISTS: The database contains live and sensitive records. Never perform destructive operations blindly.
-- MANDATORY BACKUP BEFORE MODIFICATION:
-  - Before running ANY destructive migration, `migrate:fresh`, `migrate:reset`, `db:wipe`, or schema altering commands (`ALTER TABLE`, dropping columns/tables), you MUST create a database backup dump first.
-  - Run a backup via Artisan command or database CLI (e.g., `php artisan db:backup` or a MySQL/PostgreSQL dump into a local `/storage/app/backups/` directory) before proceeding.
-  - If a migration involves modifying or dropping an existing column that contains data, write a data-migration step or save the existing column contents into a temporary/backup table before altering the schema.
-- ZERO DATA LOSS: Prefer non-destructive additive migrations (`nullable()` new columns, soft-deletes) over truncating or recreating tables.
-- NEVER run `php artisan migrate:fresh` or `php artisan db:seed` without explicit user permission.
-
 === php rules ===
 
 # PHP
@@ -130,6 +129,8 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - DO NOT write automated tests unless explicitly requested by the user.
 - Focus strictly on implementing the requested features, business logic, models, and Filament components.
 - Rely on manual verification and database integrity unless told to test critical manufacturing/inventory logic.
+- When tests ARE requested, this project uses Pest. Create tests: `php artisan make:test --pest {name}`.
+- Run tests: `php artisan test --compact` or filter: `php artisan test --compact --filter=testName`.
 
 === laravel/core rules ===
 

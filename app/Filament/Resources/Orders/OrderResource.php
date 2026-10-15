@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Orders;
 use App\Enums\OrderFormType;
 use App\Filament\Resources\Orders\Pages\CreateOrder;
 use App\Filament\Resources\Orders\Pages\EditOrder;
+use App\Filament\Resources\Orders\Pages\ListOrderActivities;
 use App\Filament\Resources\Orders\Pages\ListOrders;
 use App\Filament\Resources\Orders\Pages\ViewOrder;
 use App\Filament\Resources\Orders\Schemas\OrderForm;
@@ -25,6 +26,8 @@ use UnitEnum;
 class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
+
+    protected static ?string $recordTitleAttribute = 'order_number';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
 
@@ -74,6 +77,7 @@ class OrderResource extends Resource
             'create' => CreateOrder::route('/create'),
             'view' => ViewOrder::route('/{record}'),
             'edit' => EditOrder::route('/{record}/edit'),
+            'activities' => ListOrderActivities::route('/{record}/activities'),
         ];
     }
 

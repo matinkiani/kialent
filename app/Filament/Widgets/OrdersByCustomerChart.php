@@ -4,10 +4,13 @@ namespace App\Filament\Widgets;
 
 use App\Support\JalaliPeriod;
 use App\Support\OrderQuantities;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\ChartWidget;
 
 class OrdersByCustomerChart extends ChartWidget
 {
+    use HasWidgetShield;
+
     protected ?string $heading = 'سفارش‌های امسال به تفکیک مشتری';
 
     protected ?string $description = 'مجموع تعداد (دست) محصول هر مشتری در سال شمسی جاری';

@@ -12,13 +12,18 @@ use App\Models\User;
 use App\Support\JalaliPeriod;
 use App\Support\OrderQuantities;
 use Ariaieboy\Jalali\Jalali;
+use Filament\Facades\Filament;
+use Filament\Pages\Dashboard;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Livewire\Livewire;
+use Spatie\Permission\Models\Role;
 
 uses(LazilyRefreshDatabase::class);
 
 beforeEach(function () {
-    $this->actingAs(User::factory()->create());
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
+
+    $this->actingAs(asSuperAdmin());
 });
 
 function createOrderWithQuantity(Customer $customer, mixed $orderedAt, int $quantity): Order
@@ -125,4 +130,29 @@ test('order status chart colors each status slice', function () {
         ->assertSuccessful()
         ->assertSee('#60a5fa')
         ->assertSee('#34d399');
+});
+
+test('users without the widget permission cannot see dashboard widgets', function () {
+    $role = Role::create(['name' => 'NoWidgets']);
+    $user = User::factory()->create();
+    $user->assignRole($role);
+
+    Livewire::actingAs($user)
+        ->test(Dashboard::class)
+        ->assertSuccessful()
+        ->assertDontSee('آمار سفارش‌ها');
+
+    expect(MonthlyOrdersChart::canView())->toBeFalse();
+});
+
+test('users with the widget permission see dashboard widgets', function () {
+    Livewire::test(Dashboard::class)
+        ->assertSuccessful()
+        ->assertSee('آمار سفارش‌ها');
+});
+
+test('the dashboard does not show the record activity timeline', function () {
+    Livewire::test(Dashboard::class)
+        ->assertSuccessful()
+        ->assertDontSee('تاریخچه تغییرات');
 });

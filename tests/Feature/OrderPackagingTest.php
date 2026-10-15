@@ -7,14 +7,13 @@ use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Packaging;
 use App\Models\Product;
-use App\Models\User;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Livewire\Livewire;
 
 uses(LazilyRefreshDatabase::class);
 
 beforeEach(function () {
-    $this->actingAs(User::factory()->create());
+    $this->actingAs(asSuperAdmin());
 });
 
 test('packaging boxes are converted to hands and persisted alongside the box count', function () {

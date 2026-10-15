@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Packagings;
 
 use App\Filament\Resources\Packagings\Pages\CreatePackaging;
 use App\Filament\Resources\Packagings\Pages\EditPackaging;
+use App\Filament\Resources\Packagings\Pages\ListPackagingActivities;
 use App\Filament\Resources\Packagings\Pages\ListPackagings;
 use App\Filament\Resources\Packagings\Schemas\PackagingForm;
 use App\Filament\Resources\Packagings\Tables\PackagingsTable;
@@ -65,6 +66,7 @@ class PackagingResource extends Resource
             'index' => ListPackagings::route('/'),
             'create' => CreatePackaging::route('/create'),
             'edit' => EditPackaging::route('/{record}/edit'),
+            'activities' => ListPackagingActivities::route('/{record}/activities'),
         ];
     }
 }

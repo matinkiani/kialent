@@ -3,14 +3,13 @@
 use App\Filament\Resources\Packagings\Pages\CreatePackaging;
 use App\Models\Packaging;
 use App\Models\Product;
-use App\Models\User;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Livewire\Livewire;
 
 uses(LazilyRefreshDatabase::class);
 
 beforeEach(function () {
-    $this->actingAs(User::factory()->create());
+    $this->actingAs(asSuperAdmin());
 });
 
 test('a packaging can define different quantities for its products', function () {

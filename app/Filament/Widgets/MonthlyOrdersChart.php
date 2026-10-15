@@ -4,10 +4,13 @@ namespace App\Filament\Widgets;
 
 use App\Support\JalaliPeriod;
 use App\Support\OrderQuantities;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\ChartWidget;
 
 class MonthlyOrdersChart extends ChartWidget
 {
+    use HasWidgetShield;
+
     protected ?string $heading = 'روند ماهانه سفارش‌ها';
 
     protected ?string $description = 'مجموع تعداد (دست) محصول سفارش‌ها روی ماه‌های سال شمسی جاری';

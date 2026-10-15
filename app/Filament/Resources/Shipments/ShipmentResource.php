@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Shipments;
 
 use App\Filament\Resources\Shipments\Pages\CreateShipment;
 use App\Filament\Resources\Shipments\Pages\EditShipment;
+use App\Filament\Resources\Shipments\Pages\ListShipmentActivities;
 use App\Filament\Resources\Shipments\Pages\ListShipments;
 use App\Filament\Resources\Shipments\Pages\ViewShipment;
 use App\Filament\Resources\Shipments\Schemas\ShipmentForm;
@@ -20,6 +21,8 @@ use UnitEnum;
 class ShipmentResource extends Resource
 {
     protected static ?string $model = Shipment::class;
+
+    protected static ?string $recordTitleAttribute = 'shipment_number';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTruck;
 
@@ -69,6 +72,7 @@ class ShipmentResource extends Resource
             'create' => CreateShipment::route('/create'),
             'view' => ViewShipment::route('/{record}'),
             'edit' => EditShipment::route('/{record}/edit'),
+            'activities' => ListShipmentActivities::route('/{record}/activities'),
         ];
     }
 }

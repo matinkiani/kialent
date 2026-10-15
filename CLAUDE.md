@@ -1,4 +1,16 @@
 <laravel-boost-guidelines>
+=== .ai/database-safety rules ===
+
+# Database Safety Protocol
+
+- PRODUCTION/STAGING DATA EXISTS: The database contains live and sensitive records. Never perform destructive operations blindly.
+- MANDATORY BACKUP BEFORE MODIFICATION:
+  - Before running ANY destructive migration, `migrate:fresh`, `migrate:reset`, `db:wipe`, or schema altering commands (`ALTER TABLE`, dropping columns/tables), you MUST create a database backup dump first.
+  - Run a backup via Artisan command or database CLI (e.g., `php artisan db:backup` or a MySQL/PostgreSQL dump into a local `/storage/app/backups/` directory) before proceeding.
+  - If a migration involves modifying or dropping an existing column that contains data, write a data-migration step or save the existing column contents into a temporary/backup table before altering the schema.
+- ZERO DATA LOSS: Prefer non-destructive additive migrations (`nullable()` new columns, soft-deletes) over truncating or recreating tables.
+- NEVER run `php artisan migrate:fresh` or `php artisan db:seed` without explicit user permission.
+
 === foundation rules ===
 
 # Laravel Boost Guidelines
@@ -112,10 +124,13 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 === tests rules ===
 
-# Test Enforcement
+# Testing Policy
 
-- Every change must be programmatically tested. Write a new test or update an existing test, then run the affected tests to make sure they pass.
-- Run the minimum number of tests needed to ensure code quality and speed. Use `php artisan test --compact` with a specific filename or filter.
+- DO NOT write automated tests unless explicitly requested by the user.
+- Focus strictly on implementing the requested features, business logic, models, and Filament components.
+- Rely on manual verification and database integrity unless told to test critical manufacturing/inventory logic.
+- When tests ARE requested, this project uses Pest. Create tests: `php artisan make:test --pest {name}`.
+- Run tests: `php artisan test --compact` or filter: `php artisan test --compact --filter=testName`.
 
 === laravel/core rules ===
 
@@ -408,3 +423,13 @@ livewire(ListUsers::class)
   - `$view`: `protected string` (not `protected static string`) on `Page` and `Widget` classes
 
 </laravel-boost-guidelines>
+
+## graphify
+
+This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+
+Rules:
+- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
+- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
+- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
+- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).

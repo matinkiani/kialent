@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * @property int $id
@@ -47,7 +49,7 @@ use Illuminate\Support\Carbon;
 class OrderItem extends Model
 {
     /** @use HasFactory<OrderItemFactory> */
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $attributes = [
         'quantity' => 1,
@@ -100,5 +102,23 @@ class OrderItem extends Model
     public function shippedQuantity(): int
     {
         return (int) ($this->shipped_total ?? $this->shipmentItems()->sum('shipped_quantity'));
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty();
+    }
+
+    /**
+     * تغییرات اقلام را با شناسه‌ی سفارش والد تگ می‌کند تا در تاریخچه‌ی سفارش هم دیده شوند
+     * (حتی بعد از حذف قلم).
+     */
+    public function beforeActivityLogged(Model $activity, string $event): void
+    {
+        $activity->properties = $activity->properties->merge([
+            'order_id' => $this->order_id,
+        ]);
     }
 }

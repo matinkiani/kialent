@@ -4,10 +4,13 @@ namespace App\Filament\Widgets;
 
 use App\Enums\OrderStatus;
 use App\Models\Order;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\ChartWidget;
 
 class OrderStatusChart extends ChartWidget
 {
+    use HasWidgetShield;
+
     protected ?string $heading = 'وضعیت سفارش‌ها';
 
     protected static ?int $sort = 5;

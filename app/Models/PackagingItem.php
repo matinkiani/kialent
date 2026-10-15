@@ -8,12 +8,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Cache;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 #[Fillable(['packaging_id', 'product_id', 'quantity'])]
 class PackagingItem extends Model
 {
     /** @use HasFactory<PackagingItemFactory> */
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected static function booted(): void
     {
@@ -77,5 +79,23 @@ class PackagingItem extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty();
+    }
+
+    /**
+     * تغییرات اقلام را با شناسه‌ی بسته‌بندی والد تگ می‌کند تا در تاریخچه‌ی بسته‌بندی هم دیده شوند
+     * (حتی بعد از حذف قلم).
+     */
+    public function beforeActivityLogged(Model $activity, string $event): void
+    {
+        $activity->properties = $activity->properties->merge([
+            'packaging_id' => $this->packaging_id,
+        ]);
     }
 }

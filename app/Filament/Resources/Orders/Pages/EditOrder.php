@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Orders\Pages;
 use App\Enums\OrderStatus;
 use App\Filament\Resources\Orders\OrderResource;
 use App\Models\Order;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
@@ -43,6 +44,13 @@ class EditOrder extends EditRecord
         return [
             // دانلود یک‌جا چند فرم به دلخواه؛ هر فرم در صفحه جداگانه چاپ می‌شود
             OrderResource::downloadFormsAction(),
+
+            Action::make('activities')
+                ->label('تاریخچه تغییرات')
+                ->icon('heroicon-o-clock')
+                ->color('gray')
+                ->url(fn (Order $record): string => ListOrderActivities::getUrl(['record' => $record]))
+                ->visible(fn (): bool => (bool) auth()->user()?->can('View:ActivityHistory')),
 
             // سفارش دارای حواله خروج قابل حذف نیست؛ دکمه اصلاً نمایش داده نمی‌شود
             DeleteAction::make()

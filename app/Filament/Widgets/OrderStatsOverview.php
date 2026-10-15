@@ -7,12 +7,15 @@ use App\Models\OrderItem;
 use App\Models\ShipmentItem;
 use App\Support\JalaliPeriod;
 use App\Support\OrderQuantities;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 
 class OrderStatsOverview extends StatsOverviewWidget
 {
+    use HasWidgetShield;
+
     protected ?string $heading = 'آمار سفارش‌ها';
 
     protected static ?int $sort = 1;
