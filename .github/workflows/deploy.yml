@@ -15,11 +15,11 @@ jobs:
     steps:
       - name: Deploy to production
         env:
-          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          SSH_KEY: ${{ secrets.AUTO_PULL }}
           SSH_HOST: 94.184.32.37
         run: |
           if [ -z "$SSH_KEY" ]; then
-            echo "::error::DEPLOY_SSH_KEY secret is not set."
+            echo "::error::AUTO_PULL secret is not set."
             exit 1
           fi
           install -m 600 -D /dev/null ~/.ssh/id_ed25519

@@ -61,11 +61,11 @@ class ShipmentsTable
                 // ViewAction::make(),
                 // دکمه چاپ حواله برای راننده
                 Action::make('printGatePass')
-                ->label('چاپ')
-                ->icon('heroicon-o-printer')
-                ->color('success')
-                ->openUrlInNewTab()
-                ->url(fn (Shipment $record): string => route('shipments.gate-pass.download', $record)),
+                    ->label('چاپ')
+                    ->icon('heroicon-o-printer')
+                    ->color('success')
+                    ->openUrlInNewTab()
+                    ->url(fn (Shipment $record): string => route('shipments.gate-pass.download', $record)),
                 EditAction::make(),
 
             ]);
