@@ -1,0 +1,28 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to production
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          SSH_HOST: 94.184.32.37
+        run: |
+          if [ -z "$SSH_KEY" ]; then
+            echo "::error::DEPLOY_SSH_KEY secret is not set."
+            exit 1
+          fi
+          install -m 600 -D /dev/null ~/.ssh/id_ed25519
+          echo "$SSH_KEY" > ~/.ssh/id_ed25519
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
+          ssh -o BatchMode=yes root@"$SSH_HOST" 'cd /opt/kialent && ./scripts/deploy.sh'
