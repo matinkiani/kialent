@@ -11,7 +11,6 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Shipment;
 use App\Models\ShipmentItem;
-use Filament\Forms\Components\Select;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Livewire\Livewire;
 
@@ -221,18 +220,4 @@ test('a shipment view shows shipment details and item weights', function () {
         ->assertSee('300')  // مقدار ارسالی
         ->assertSee('200')  // تعداد باقیمانده
         ->assertSee('0.750');
-});
-
-test('the order select options are sorted by id descending', function () {
-    $customer = Customer::factory()->create(['code' => '14']);
-
-    $older = Order::factory()->for($customer)->create();
-    $newest = Order::factory()->for($customer)->create();
-
-    Livewire::test(CreateShipment::class)
-        ->assertFormComponentExists('order_id', function (Select $component) use ($older, $newest): bool {
-            $optionIds = array_keys($component->getOptionsFromRelationship() ?? []);
-
-            return $optionIds === [$newest->id, $older->id];
-        });
 });

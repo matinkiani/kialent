@@ -3,8 +3,6 @@
 use App\Enums\ChamferType;
 use App\Enums\OrderPriority;
 use App\Enums\OrderStatus;
-use App\Enums\PadColor;
-use App\Enums\ProductModel;
 use App\Enums\SlotType;
 use App\Filament\Resources\Orders\Pages\CreateOrder;
 use App\Filament\Resources\Orders\Pages\EditOrder;
@@ -153,20 +151,23 @@ test('the order view infolist shows order-level specs', function () {
 
 test('an order can be created with items via the repeater and receives an order number', function () {
     $customer = Customer::factory()->create(['code' => '14']);
+    $product = Product::factory()->create();
 
     Livewire::test(CreateOrder::class)
         ->fillForm([
             'customer_id' => $customer->id,
+            'brand' => 'Bednar',
             'priority' => OrderPriority::High->value,
             'ordered_at' => now()->toDateString(),
             'payment_notes' => 'Half paid in advance.',
+            'color' => 'black',
             'orderItems' => [
                 [
-                    'product_model' => ProductModel::Model001->value,
+                    'product_id' => $product->id,
                     'quantity' => 5,
                     'backing_plate_thickness' => 3.5,
                     'has_shim' => true,
-                    'color' => PadColor::Black->value,
+                    'color' => 'black',
                     'slot_type' => SlotType::Straight->value,
                     'chamfer_type' => ChamferType::Standard->value,
                 ],
@@ -185,27 +186,30 @@ test('an order can be created with items via the repeater and receives an order 
 
     $item = $order->orderItems->sole();
 
-    expect($item->product_model)->toBe(ProductModel::Model001)
+    expect($item->product_id)->toBe($product->id)
         ->and($item->quantity)->toBe(5)
         ->and($item->has_shim)->toBeTrue()
-        ->and($item->color)->toBe(PadColor::Black)
+        ->and($item->color)->toBe('black')
         ->and($item->slot_type)->toBe(SlotType::Straight)
         ->and($item->chamfer_type)->toBe(ChamferType::Standard);
 });
 
 test('creating multiple orders for the same customer increments the order number', function () {
     $customer = Customer::factory()->create(['code' => '99']);
+    $product = Product::factory()->create();
 
     foreach (range(1, 2) as $_) {
         Livewire::test(CreateOrder::class)
             ->fillForm([
                 'customer_id' => $customer->id,
+                'brand' => 'Bednar',
                 'ordered_at' => now()->toDateString(),
+                'color' => 'black',
                 'orderItems' => [
                     [
-                        'product_model' => ProductModel::Model002->value,
+                        'product_id' => $product->id,
                         'quantity' => 1,
-                        'color' => PadColor::Grey->value,
+                        'color' => 'grey',
                         'slot_type' => SlotType::None->value,
                         'chamfer_type' => ChamferType::None->value,
                     ],
@@ -223,6 +227,7 @@ test('editing an order auto-changes the status to modified when the data changes
     $customer = Customer::factory()->create(['code' => '14']);
     $order = Order::factory()->for($customer)->create([
         'status' => OrderStatus::Initial,
+        'color' => 'black',
     ]);
 
     Livewire::test(EditOrder::class, ['record' => $order->id])
@@ -240,6 +245,7 @@ test('manually changing the status is respected and not overridden', function ()
     $customer = Customer::factory()->create(['code' => '14']);
     $order = Order::factory()->for($customer)->create([
         'status' => OrderStatus::Initial,
+        'color' => 'black',
     ]);
 
     Livewire::test(EditOrder::class, ['record' => $order->id])
@@ -256,6 +262,7 @@ test('updating an order item auto-changes the status to modified', function () {
     $customer = Customer::factory()->create(['code' => '14']);
     $order = Order::factory()->for($customer)->create([
         'status' => OrderStatus::Initial,
+        'color' => 'black',
     ]);
     $product = Product::factory()->create();
     $orderItem = OrderItem::factory()->for($order)->for($product)->create([
@@ -288,6 +295,7 @@ test('adding a new order item auto-changes the status to modified', function () 
     $customer = Customer::factory()->create(['code' => '14']);
     $order = Order::factory()->for($customer)->create([
         'status' => OrderStatus::Initial,
+        'color' => 'black',
     ]);
     $product = Product::factory()->create();
     $orderItem = OrderItem::factory()->for($order)->for($product)->create([
@@ -328,6 +336,7 @@ test('removing an order item auto-changes the status to modified', function () {
     $customer = Customer::factory()->create(['code' => '14']);
     $order = Order::factory()->for($customer)->create([
         'status' => OrderStatus::Initial,
+        'color' => 'black',
     ]);
     $product = Product::factory()->create();
     $orderItem = OrderItem::factory()->for($order)->for($product)->create([
@@ -352,6 +361,7 @@ test('submitting the order form marks the order as modified even without changes
     $customer = Customer::factory()->create(['code' => '14']);
     $order = Order::factory()->for($customer)->create([
         'status' => OrderStatus::Initial,
+        'color' => 'black',
     ]);
     $product = Product::factory()->create();
     $orderItem = OrderItem::factory()->for($order)->for($product)->create([
@@ -383,6 +393,7 @@ test('editing a single item field like in the browser marks the order as modifie
     $customer = Customer::factory()->create(['code' => '14']);
     $order = Order::factory()->for($customer)->create([
         'status' => OrderStatus::Initial,
+        'color' => 'black',
     ]);
     $product = Product::factory()->create();
     $orderItem = OrderItem::factory()->for($order)->for($product)->create([

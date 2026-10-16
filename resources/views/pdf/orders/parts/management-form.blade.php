@@ -55,15 +55,6 @@
 
                 <!-- ستون توضیحات: فقط موارد پرشده نمایش داده می‌شوند -->
                 <td class="border-normal p-2 text-xs text-right leading-relaxed">
-                    @if ($item->slot_type)
-                        <div><span class="font-bold text-gray-700">شیار:</span> {{ $item->slot_type->getLabel() }}</div>
-                    @endif
-                    @if ($item->chamfer_type)
-                        <div><span class="font-bold text-gray-700">پخ:</span> {{ $item->chamfer_type->getLabel() }}</div>
-                    @endif
-                    @if (filled($item->backing_plate_thickness))
-                        <div><span class="font-bold text-gray-700">کفشک:</span> <span dir="ltr">{{ $item->backing_plate_thickness }} mm</span></div>
-                    @endif
                     @if (filled($item->production_notes))
                         <div><span class="font-bold text-gray-700">تولید:</span> {!! nl2br(e(trim($item->production_notes))) !!}</div>
                     @endif

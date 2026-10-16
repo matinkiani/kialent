@@ -54,7 +54,7 @@ test('the gate pass shows shipment identity, customer, driver, and shipped quant
         ->toContain('لنت پژو ۴۰۵');
 });
 
-test('the gate pass renders the has_shim state as real bold HTML, not escaped text', function () {
+test('the gate pass marks shim items with an inline marker, not escaped text', function () {
     $customer = Customer::factory()->create();
     $product = Product::factory()->create(['name' => 'لنت ۲۰۶']);
     $order = Order::factory()->for($customer)->create();
@@ -85,23 +85,10 @@ test('the gate pass renders the has_shim state as real bold HTML, not escaped te
         ->assertOk()
         ->getContent();
 
-    // قلم با شیم: تگ واقعی و بدون کاراکترهای فراری
-    expect($html)
-        ->toContain('<span class="font-bold">دارد</span>')
-        ->not->toContain('&lt;span')
-        ->not->toContain("'دارد'");
-
-    // قلم با شیم باید به‌عنوان تگ واقعی بولد شده باشد (نه متن فراری)
-    expect($html)
-        ->toContain('<span class="font-bold">دارد</span>')
-        ->not->toContain('&lt;span')
-        ->not->toContain("'دارد'");
-
-    // فقط داخل تیبل (بدون «پیوست: ندارد» در سربرگ)، دقیقاً یک قلم با شیم
-    // و دقیقاً یک قلم بدون شیم وجود دارد
+    // نشانگر شیم به‌صورت (ش) داخل جدول رندر می‌شود؛ نه به‌صورت متن فراری
     $tbody = (string) str($html)->after('<tbody')->before('</tbody>');
 
-    expect(substr_count($tbody, '<span class="font-bold">دارد</span>'))->toBe(1)
-        ->and(substr_count($tbody, 'ندارد'))->toBe(1);
+    expect(substr_count($tbody, '(ش)'))->toBe(1)
+        ->and($html)->not->toContain('&lt;span');
 
 });
